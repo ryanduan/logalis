@@ -1,0 +1,60 @@
+#usr/bin/python
+
+import os
+import re
+import time
+
+def readLog(filename):
+    logfile = open(filename)
+    content = logfile.readlines()
+    logfile.close()
+    if content:
+        print len(content)
+        return content
+    else:
+        return None
+
+def match_log(logs):
+    ef = open('/home/ryan/error.log','w')
+    wf = open('/home/ryan/warning.log','w')
+    rse = "ERROR"
+    rsw = "WARNING"
+    lstart = "^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}"
+    en = 0
+    wn = 0
+    rn = 0
+    tn = 0
+    for line in logs:
+        line_in = True
+        tn+=1
+        result1 = re.findall(rse,line)
+        result2 = re.findall(rsw,line)
+        if re.match(lstart,line):
+            line_in = False
+        if result1 or line_in:
+            en+=1
+            ef.write(line)
+        elif result2 or line_in:
+            wn+=1
+            wf.write(line)
+        else:
+            rn+=1
+    print en,'error'
+    print wn,'warning'
+    print rn,'right'
+    print tn,'for loop times'
+    ef.close()
+    wf.close()
+
+
+
+
+
+
+if __name__ == '__main__':
+    start = time.clock()
+    #logs = readLog('/var/log/DeliveryHeroChina/deliveryhero.log')
+    logs = readLog('deliveryhero.log')
+    match_log(logs)
+    caset = (time.clock()-start)
+    print "time:",caset

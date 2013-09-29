@@ -1,0 +1,48 @@
+2013-09-23 17:28:42,331 INFO:dowant.views: There was an exception on getting most_recent_orders Customer matching query does not exist.
+2013-09-23 17:28:43,802 ERROR:dowant.mobile.views: Unable to get delivery fee info for KARIKARE
+2013-09-23 17:28:54,415 WARNING:dowant.sms.views: Message received is not a valid 3 digits number or phone number is not relevant to customer or order confimation PHONE:18645966745, CONTENT:685186
+2013-09-23 17:29:16,655 ERROR:django.request: Internal Server Error: /shanghai-153/
+Traceback (most recent call last):
+  File "/opt/venvs/deliveryhero_venv/local/lib/python2.7/site-packages/django/core/handlers/base.py", line 111, in get_response
+    response = callback(request, *callback_args, **callback_kwargs)
+  File "/opt/dh_site/dowant/urlhandler/halpers.py", line 38, in inner
+    response = func(request, *args, **kwargs)
+  File "/opt/dh_site/dowant/urlhandler/views.py", line 52, in resolve_1
+    return redirect_permanent(request, nurl_a.n_path)
+  File "/opt/dh_site/dowant/urlhandler/models.py", line 327, in n_path
+    path = (self.restaurant.city.slug, self.url,)
+AttributeError: 'Restaurant' object has no attribute 'city'
+2013-09-23 17:29:22,906 INFO:dowant.location.number_street_xstreet.views_ajax: Successful AJAX call.
+2013-09-23 17:29:26,018 INFO:dowant.location.number_street_xstreet.views_ajax: aliyun ns search results found in cache.
+2013-09-23 17:29:26,153 INFO:requests.packages.urllib3.connectionpool: Starting new HTTP connection (1): esms4.etonenet.com
+2013-09-23 17:29:26,963 INFO:dowant.location.number_street_xstreet.views_ajax: aliyun ns search results found in cache.
+2013-09-23 17:29:28,693 INFO:dowant.customer.views: Existing Location Found: 52307
+2013-09-23 17:29:28,717 INFO:dowant.location.number_street_xstreet.views_ajax: Successful AJAX call.
+2013-09-23 17:29:30,300 INFO:dowant.location.number_street_xstreet.views_ajax: Successful AJAX call.
+2013-09-23 17:29:30,576 INFO:dowant.customer.views: Existing Location Found: 19549
+2013-09-23 17:30:07,076 ERROR:django.request: Internal Server Error: /delicious-pizza-house/
+Traceback (most recent call last):
+  File "/opt/venvs/deliveryhero_venv/local/lib/python2.7/site-packages/django/core/handlers/base.py", line 111, in get_response
+    response = callback(request, *callback_args, **callback_kwargs)
+  File "/opt/dh_site/dowant/urlhandler/halpers.py", line 38, in inner
+    response = func(request, *args, **kwargs)
+  File "/opt/dh_site/dowant/urlhandler/views.py", line 52, in resolve_1
+    return redirect_permanent(request, nurl_a.n_path)
+  File "/opt/dh_site/dowant/urlhandler/models.py", line 327, in n_path
+    path = (self.restaurant.city.slug, self.url,)
+AttributeError: 'Restaurant' object has no attribute 'city'
+2013-09-23 17:30:12,512 INFO:dowant.location.number_street_xstreet.views_ajax: aliyun ns search results not found in cache
+2013-09-23 17:30:12,672 INFO:requests.packages.urllib3.connectionpool: Starting new HTTP connection (1): gc.ditu.aliyun.com
+2013-09-23 17:29:30,576 INFO:dowant.customer.views: Existing Location Found: 19549
+2013-09-23 17:29:46,095 WARNING:dowant.location.number_street_xstreet.views_ajax: Duplicate LocationLookup objects, ids: [483072, 478087, 473418, 469955, 461128, 451769, 451768, 451603, 443630, 424191, 423671, 416500, 416155, 407060, 406844, 406601, 394453, 380773, 361120, 342585, 338581, 334252, 333944, 329558, 318801, 314819, 291762, 286913, 240597, 238372, 233773, 220041, 206630, 190391, 175173, 169023, 154022, 153863, 151602, 125043, 125042, 114700, 101960]
+2013-09-23 17:29:46,097 WARNING:dowant.location.number_street_xstreet.views_ajax: Lookup with pk: 483072 has no results
+2013-09-23 17:29:46,099 INFO:requests.packages.urllib3.connectionpool: Starting new HTTP connection (1): gc.ditu.aliyun.com
+2013-09-23 17:29:46,122 INFO:dowant.location.number_street_xstreet.views_ajax: aliyun sxs location lookup performed.
+2013-09-23 17:29:47,182 INFO:dowant.location.number_street_xstreet.views_ajax: google sxs search results found in cache.
+2013-09-23 17:29:49,564 INFO:dowant.location.number_street_xstreet.views_ajax: aliyun ns search results found in cache.
+2013-09-23 17:29:49,894 WARNING:dowant.location.number_street_xstreet.views_ajax: Duplicate LocationLookup objects, ids: [485314, 480147, 469402, 465429, 465312, 464387, 452038, 448994, 448681, 448265, 444097, 443717, 443157, 438237, 437962, 436826, 414887, 414879, 412655, 412418, 412305, 412302, 411360, 411254, 408433, 407685, 385567, 375435, 372397, 369322, 369317, 368489, 338722, 333497, 327468, 323879, 311364, 311363, 304709, 304545, 292319, 292084, 292058, 291178, 291116, 290791, 289560, 284216, 284196, 280406, 277577, 276919, 276074, 273842, 270235, 254446, 250912, 249824, 231278, 230538, 222100, 214974, 196619, 196615, 193407, 193235, 189624, 182119, 172131, 172116, 169066, 164170, 162821, 161989, 161977, 154762, 147590, 141596, 140803, 139566, 137926, 134375, 133575, 133527, 133251, 133217, 121381, 120251, 105488, 104261, 102360]
+2013-09-23 17:29:49,896 WARNING:dowant.location.number_street_xstreet.views_ajax: Lookup with pk: 485314 has no results
+2013-09-23 17:29:49,899 INFO:requests.packages.urllib3.connectionpool: Starting new HTTP connection (1): gc.ditu.aliyun.com
+2013-09-23 17:29:49,937 INFO:dowant.location.number_street_xstreet.views_ajax: aliyun sxs location lookup performed.
+2013-09-23 17:29:50,255 WARNING:dowant.location.number_street_xstreet.views_ajax: Duplicate LocationLookup objects, ids: [65259, 62133, 26896, 12482]
+2013-09-23 17:29:50,261 INFO:dowant.location.number_street_xstreet.views_ajax: google sxs search results found in cache.
