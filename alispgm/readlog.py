@@ -1,68 +1,155 @@
 #!/usr/bin/python
 #-*- coding: utf-8 -*-
+# Author: Ryan
 
-#   Author: Ryan
-#   Datetime: 2013-09-29
-#   Address: Shanghai
-#   Company: DeliveryHeroChina
-#   Version: 0.1
-#   This is a logfile analysis script of python.
-
-import sys
 from os import stat
-from os.path import exists
+from os.path import exists, getsize
 import glob
-import string
-from optparse import OptionParser
 
-class LogAnalysis(object):
+class Readlog(object):
     """
-    Documentation & Discription
+    Creates an iterable object that returns only unread lines.
     """
+    def __init__(self, filename, offset_file=None, paranoid=False):
+        self.filename = filename
+        self.paranoid = paranoid
+        self._offset_file = offset_file or "%s.offset" % self.filename
+        self._offset_file_inode = 0
+        self._offset = 0
+        self._fh = None
+        self._rotated_logfile = None
 
-    def __init__(self, logfile):
+        # if offset file exists and non-empty, open and parse it
+        if exists(self._offset_file) and getsize(self._offset_file):
+            offset_fh = open(self._offset_file, "r")
+            (self._offset_file_inode, self._offset) = \
+                [int(line.strip()) for line in offset_fh]
+            offset_fh.close()
+            if self._offset_file_inode != stat(self.filename).st_ino:
+                # The inode has changed, so the file might have been rotated.
+                # Look for the rotated file and process that if we find it.
+                self._rotated_logfile = self._determine_rotated_logfile()
+
+    def __del__(self):
+        if self._filehandle():
+            self._filehandle().close()
+
+    def __iter__(self):
+        return self
+
+    def next(self):
         """
-        Initialize
+        Return the next line in the file, updating the offset.
         """
-        self.logfile = logfile
-        self.total_num = 0
-        self.error_num = 0
-        self.warning_num = 0
-        self.info_num = 0
-        print "get file",self.logfile
+        try:
+            line = next(self._filehandle())
+        except StopIteration:
+            # we've reached the end of the file; if we're processing the
+            # rotated log file, we can continue with the actual file; otherwise
+            # update the offset file
+            if self._rotated_logfile:
+                self._rotated_logfile = None
+                self._fh.close()
+                self._offset = 0
+                # open up current logfile and continue
+                try:
+                    line = next(self._filehandle())
+                except StopIteration:  # oops, empty file
+                    self._update_offset_file()
+                    raise
+            else:
+                self._update_offset_file()
+                raise
 
-#    def __iter__(self):
-#        return self
+        if self.paranoid:
+            self._update_offset_file()
 
+        return line
 
-    def _readlines(self):
+    def _filehandle(self):
         """
-        Read log file in lines
+        Return a filehandle to the file being tailed, with the position set
+        to the current offset.
         """
-        self.logc = open(self.logfile)
-        self.logs = self.logc.readlines()
-        print self.logs
-        print "#"*100
-#        return self.logs
-        return [line for line in self.logs]
+        if not self._fh or self._fh.closed:
+            filename = self._rotated_logfile or self.filename
+            self._fh = open(filename, "r")
+            self._fh.seek(self._offset)
 
-    def read(self):
-        lines = self._readlines()
-        print lines
-        if lines:
-            print "read file"
-            return "".join(lines)
+        return self._fh
+
+    def _update_offset_file(self):
+        """
+        Update the offset file with the current inode and offset.
+        """
+        offset = self._filehandle().tell()
+        inode = stat(self.filename).st_ino
+        fh = open(self._offset_file, "w")
+        fh.write("%s\n%s\n" % (inode, offset))
+        fh.close()
+
+    def _determine_rotated_logfile(self):
+        """
+        We suspect the logfile has been rotated, so try to guess what the
+        rotated filename is, and return it.
+        """
+        rotated_filename = self._check_rotated_filename_candidates()
+        if (rotated_filename and exists(rotated_filename) and
+            stat(rotated_filename).st_ino == self._offset_file_inode):
+            return rotated_filename
         else:
             return None
 
-    def _filehandle(self):
-        pass
+    def _check_rotated_filename_candidates(self):
+        """
+        Check for various rotated logfile filename patterns and return the first
+        match we find.
+        """
+        # savelog(8)
+        candidate = "%s.0" % self.filename
+        if (exists(candidate) and exists("%s.1.gz" % self.filename) and
+            (stat(candidate).st_mtime > stat("%s.1.gz" % self.filename).st_mtime)):
+            return candidate
 
-    def __del__(self):
-        if self.logc:
-            print "close file"
-            self.logc.close()
+        # logrotate(8)
+        candidate = "%s.1" % self.filename
+        if exists(candidate):
+            return candidate
+
+        # dateext rotation scheme
+        candidates = glob.glob("%s-[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]" % self.filename)
+        if candidates:
+            candidates.sort()
+            return candidates[-1]  # return most recent
+
+        # for TimedRotatingFileHandler
+        candidates = glob.glob("%s.[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]" % self.filename)
+        if candidates:
+            candidates.sort()
+            return candidates[-1]  # return most recent
+
+        # no match
+        return None
+
+def analysislog(logs):
+    error_num = 0
+    warning_num = 0
+    info_num = 0
+    errors = []
+    for log in logs:
+        if 'INFO' in log:
+            info_num += 1
+        elif 'WARNING' in log:
+            warning_num += 1
+        else:
+            if 'ERROR' in log:
+                error_num += 1
+                errors.append(log)
+            errors.append(log)
+    return (info_num, warning_num, error_num, errors)
 
 if __name__ == "__main__":
-    aa = LogAnalysis("/tmp/test002.log")
-    print aa.read()
+    logs = Readlog("/../../test01.log") #Need an absolut path
+    loginfo = analysislog(logs)
+    print loginfo
+
