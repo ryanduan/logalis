@@ -5,6 +5,7 @@
 from os import stat
 from os.path import exists, getsize
 import glob
+from datetime import datetime
 
 class Readlog(object):
     """
@@ -132,24 +133,34 @@ class Readlog(object):
         return None
 
 def analysislog(logs):
+    timenow = datetime.now()
     error_num = 0
     warning_num = 0
     info_num = 0
+#    d_n = 0
     errors = []
+#    debugs = []
     for log in logs:
         if 'INFO' in log:
             info_num += 1
         elif 'WARNING' in log:
             warning_num += 1
+#        elif 'DEBUG' in log:
+#            d_n += 1
+#            debugs.append(log)
         else:
             if 'ERROR' in log:
                 error_num += 1
                 errors.append(log)
             errors.append(log)
-    return (info_num, warning_num, error_num, errors)
+#    return (timenow, info_num, warning_num, error_num, d_n, errors, debugs)
+    return (timenow, info_num, warning_num, error_num, errors)
 
 if __name__ == "__main__":
-    logs = Readlog("/../../test01.log") #Need an absolut path
+    import datetime
+    print datetime.datetime.now()
+    logs = Readlog("/home/ryan/testoflog/test01.log")
+    print "readlog"
     loginfo = analysislog(logs)
     print loginfo
 
